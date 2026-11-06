@@ -133,6 +133,21 @@ function makeDoc(reg, options = {}) {
   };
   doc.body = new FakeNode('body', doc);
   doc.documentElement = new FakeNode('window', doc);
+  /* Stylesheets are now real <link> nodes appended to the XUL root (Gecko
+   * ignores processing instructions inserted after parsing). Track them the
+   * same way the old PI injection was tracked. */
+  const rootAppend = doc.documentElement.appendChild.bind(doc.documentElement);
+  doc.documentElement.appendChild = (node) => {
+    if (node && node.tag === 'link' && node.attrs && node.attrs.rel === 'stylesheet') {
+      reg.injected.push(node);
+    }
+    return rootAppend(node);
+  };
+  const rootRemove = doc.documentElement.removeChild.bind(doc.documentElement);
+  doc.documentElement.removeChild = (node) => {
+    reg.nodesRemoved++;
+    return rootRemove(node);
+  };
   for (const id of PREF_IDS) {
     const node = new FakeNode('input', doc);
     node.attrs.id = id;
@@ -196,7 +211,7 @@ function makeZotero(reg, prefs, options) {
       unregisterSection: (id) => reg.unregisteredSections.push(id),
     },
     PreferencePanes: {
-      register: (def) => { reg.prefPanes.push(def); return 'litmag-pane'; },
+      register: (def) => { reg.prefPanes.push(def); return def.id || 'litmag-pane'; },
       open: (id) => reg.prefOpens.push(id),
     },
     Reader: {
@@ -212,7 +227,10 @@ function makeZotero(reg, prefs, options) {
     Item: class extends FakeZoteroItem {
       async saveTx() { reg.notes.push(this); return await super.saveTx(); }
     },
-    Utilities: { Internal: { copyTextToClipboard: (t) => { reg.clipboard = t; } } },
+    Utilities: { Internal: {
+      copyTextToClipboard: (t) => { reg.clipboard = t; },
+      openPreferences: (paneID) => { reg.openedPrefPane = paneID; },
+    } },
   };
   return { Zotero, win };
 }
@@ -280,7 +298,7 @@ export async function loadPlugin(options = {}) {
   const bootstrap = fs.readFileSync(path.join(root, 'bootstrap.js'), 'utf8');
   vm.runInContext(bootstrap, env.context, { filename: 'bootstrap.js' });
   await env.context.startup(
-    { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0', rootURI: 'file:///litmag/' }, 1);
+    { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0.1', rootURI: 'file:///litmag/' }, 1);
   return env;
 }
 

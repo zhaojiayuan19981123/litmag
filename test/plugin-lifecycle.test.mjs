@@ -6,7 +6,7 @@ import path from 'node:path';
 import { loadPlugin, fakeItem, FakeNode } from '../scripts/support.mjs';
 import { root } from '../scripts/support.mjs';
 
-const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0', rootURI: 'file:///litmag/' };
+const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0.1', rootURI: 'file:///litmag/' };
 
 test('startup registers all Zotero surfaces without contacting any service', async () => {
   const env = await loadPlugin();
@@ -31,16 +31,23 @@ test('startup registers all Zotero surfaces without contacting any service', asy
   assert.match(reg.prefPanes[0].scripts[0], /content\/preferences\.js$/);
   assert.equal(reg.readers.length, 1);
   assert.equal(reg.readers[0][0], 'renderTextSelectionPopup');
-  assert.equal(context.LitMag.state.version, '2.0');
+  assert.equal(context.LitMag.state.version, '2.0.1');
   assert.equal(reg.httpCalls.length, 0, 'no engine probe, no sidecar handshake at startup');
   assert.equal(reg.ftl.includes('litmag.ftl'), true);
-  assert.equal(reg.injected.length, 1, 'one stylesheet processing instruction per window');
+  assert.equal(reg.injected.length, 1, 'one stylesheet link per window');
+  const sheet = reg.injected[0];
+  assert.equal(sheet.tag, 'link', 'stylesheet must be a real element, not a processing instruction');
+  assert.equal(sheet.getAttribute('rel'), 'stylesheet');
+  assert.match(sheet.getAttribute('href'), /skin\/litmag\.css$/);
   assert.equal(prefs.get('extensions.litmag.provider'), 'openai');
   assert.equal(prefs.get('extensions.litmag.apiKey'), '');
   assert.equal(prefs.get('extensions.litmag.model'), 'gpt-4o-mini');
   assert.equal(prefs.get('extensions.litmag.engineURL'), undefined);
   assert.equal(context.Zotero.LitMag, context.LitMag, 'core must be reachable from the prefs pane');
   assert.ok(doc.nodes.size > 10);
+  assert.equal(context.LitMag.openPreferences(), true);
+  assert.equal(reg.openedPrefPane, 'litmag-prefpane',
+    'model settings must open the LitMag pane itself, not the generic settings');
   context.shutdown(DATA, 1);
 });
 

@@ -3,9 +3,9 @@
     "litmag@zhaojiayuan19981123.github.io": {
       "updates": [
         {
-          "version": "2.0",
-          "update_link": "https://github.com/zhaojiayuan19981123/litmag/releases/download/v2.0/litmag-2.0.xpi",
-          "update_hash": "sha256:27c8fc1719095eb060facf369823346f2ce362e7c4a6920a786480f3994813d1",
+          "version": "2.0.1",
+          "update_link": "https://github.com/zhaojiayuan19981123/litmag/releases/download/v2.0.1/litmag-2.0.1.xpi",
+          "update_hash": "sha256:868ca4219fa7add35aa03a9618a11db06bab968444a6e6d8d1bc3f64ac462b44",
           "applications": {
             "zotero": {
               "strict_min_version": "10.0.6"

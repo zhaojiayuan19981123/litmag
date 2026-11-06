@@ -167,6 +167,16 @@
 
   function bind() {
     if (window.__litmagPrefsBound) return;
+    /* The preference pane is loaded as an XHTML fragment, so its script can
+     * run before the controls are inserted. Wait for the first field instead
+     * of binding to a document that has no inputs yet. */
+    if (!byId('litmag-provider') && typeof window.setTimeout === 'function') {
+      window.__litmagPrefsRetries = (window.__litmagPrefsRetries || 0) + 1;
+      if (window.__litmagPrefsRetries < 30) {
+        window.setTimeout(bind, 100);
+        return;
+      }
+    }
     window.__litmagPrefsBound = true;
     try {
       if (window.MozXULElement && window.MozXULElement.insertFTLIfNeeded) {

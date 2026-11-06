@@ -1,5 +1,6 @@
 node_modules/
 dist/
 .litmag/
+.test-zotero/
 *.log
 .DS_Store

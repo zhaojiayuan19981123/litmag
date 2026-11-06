@@ -38,7 +38,7 @@ test('manifest targets Zotero 10 only and matches the package version', () => {
   const pkg = JSON.parse(read('package.json'));
   assert.equal(manifest.manifest_version, 2);
   assert.equal(manifest.version, pkg.version);
-  assert.equal(pkg.version, '2.0');
+  assert.equal(pkg.version, '2.0.1');
   assert.equal(manifest.applications.zotero.strict_min_version, '10.0.6');
   assert.equal(manifest.applications.zotero.strict_max_version, '10.*');
   assert.equal(manifest.browser_specific_settings.gecko.id, manifest.applications.zotero.id);
@@ -86,6 +86,16 @@ test('no source file references a local engine or workbench server', () => {
     const text = read(file);
     assert.doesNotMatch(text, /23127|127\.0\.0\.1:3000|litmag-engine|\/workbench\?/, `${file} still references the sidecar`);
   }
+});
+
+test('preferences pane is a bare XUL fragment (Zotero 10 fragment parser)', () => {
+  const xhtml = read('content/preferences.xhtml');
+  // A leading declaration / root namespace / inline script makes Zotero's
+  // fragment parser throw "not well-formed XML" and silently drop the pane.
+  assert.doesNotMatch(xhtml, /<\?xml/, 'XML declaration breaks the fragment parser');
+  assert.doesNotMatch(xhtml, /xmlns(?::[A-Za-z]+)?\s*=/, 'namespaces must come from the host document');
+  assert.doesNotMatch(xhtml, /<script\b/i, 'scripts must be loaded via PreferencePanes.register');
+  assert.match(xhtml, /^\s*<vbox\b/, 'root must be a bare XUL vbox');
 });
 
 test('preferences pane, locales, icons and styles are present', () => {

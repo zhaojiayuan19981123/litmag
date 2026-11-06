@@ -242,13 +242,24 @@
       var doc = win.document;
       if (!doc || win.__litmagResourcesInjected) return;
       win.__litmagResourcesInjected = true;
-      if (win.MozXULElement && win.MozXULElement.insertFTLIfNeeded) {
-        win.MozXULElement.insertFTLIfNeeded('litmag.ftl');
+      /* A <?xml-stylesheet?> processing instruction inserted after the XUL
+       * document has been parsed is ignored by Gecko. That left every LitMag
+       * panel completely unstyled in Zotero 10: the menus worked, but the
+       * floating panel and item-pane section were bare, unlaid-out DOM.
+       * Use a real XHTML <link> element, the approach Zotero Prism uses. */
+      if (!doc.getElementById('litmag-stylesheet')) {
+        var link = doc.createElementNS('http://www.w3.org/1999/xhtml', 'link');
+        link.setAttribute('id', 'litmag-stylesheet');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('type', 'text/css');
+        link.setAttribute('href', P.state.rootURI + 'skin/litmag.css');
+        (doc.head || doc.documentElement).appendChild(link);
+        P.state.domNodes.push({ win: win, node: link });
       }
-      var pi = doc.createProcessingInstruction('xml-stylesheet',
-        'href="' + P.state.rootURI + 'skin/litmag.css" type="text/css"');
-      doc.insertBefore(pi, doc.firstChild);
-      P.state.domNodes.push({ win: win, node: pi });
+      if (win.MozXULElement && win.MozXULElement.insertFTLIfNeeded) {
+        try { win.MozXULElement.insertFTLIfNeeded('litmag.ftl'); }
+        catch (e) { /* locale file is optional; menus use plain labels */ }
+      }
     }
     catch (e) { P.debug('injectResources: ' + e); }
   }

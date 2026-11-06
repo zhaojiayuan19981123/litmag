@@ -1,6 +1,6 @@
 {
   "name": "litmag",
-  "version": "2.0",
+  "version": "2.0.1",
   "private": true,
   "type": "module",
   "description": "A self-contained Zotero 10 plugin: AI copilot with user-supplied model credentials, running entirely inside Zotero.",

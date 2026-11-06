@@ -3,11 +3,11 @@
 **完全运行在 Zotero 内部的 AI 助手。** 安装一个 `.xpi` 即可，不需要启动任何外部程序、本地服务或工作台，也不需要 Node.js / npm。**模型由你自己配置**：在 Zotero 设置里填写接口地址、API Key 和模型名称，插件通过 Zotero 自带的特权 HTTP 能力直接向该接口发请求。
 
 > 仅支持 Zotero 10（`strict_min_version 10.0.6` / `strict_max_version 10.*`）。
-> 本页描述的是 **v2.0 纯插件版**；v1.0 的「插件 + 本机桥接服务」方案已废弃。
+> 本页描述的是 **v2.0.1 纯插件版**（v2.0.1 为真机修复版，修正了 v2.0 在 Zotero 10 上界面无法使用的问题）；v1.0 的「插件 + 本机桥接服务」方案已废弃。
 
 ## 安装
 
-1. 从 [Releases](https://github.com/zhaojiayuan19981123/litmag/releases) 下载 `litmag-2.0.xpi`。
+1. 从 [Releases](https://github.com/zhaojiayuan19981123/litmag/releases) 下载 `litmag-2.0.1.xpi`。
 2. Zotero → 工具 → 插件 → ⚙ → **Install Add-on From File** → 选择该 `.xpi` → 重启 Zotero。
 3. 打开 **设置 → LitMag**，填写模型信息，点击「测试连接」。
 
@@ -73,7 +73,7 @@ content/menus.js    菜单、分区、偏好页、阅读器、生命周期
 ## 从源码构建与测试
 
 ```bash
-node scripts/build-xpi.mjs   # 生成 dist/litmag-2.0.xpi、update.json、SHA256SUMS.txt
+node scripts/build-xpi.mjs   # 生成 dist/litmag-2.0.1.xpi、update.json、SHA256SUMS.txt
 node --test                  # 单元测试 + 本地真实 HTTP/SSE 端到端测试
 ```
 

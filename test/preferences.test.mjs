@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadPlugin, loadPrefPane } from '../scripts/support.mjs';
 
-const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0', rootURI: 'file:///litmag/' };
+const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0.1', rootURI: 'file:///litmag/' };
 const PREFS = {
   apiKey: 'sk-unit-test', model: 'gpt-4o-mini', stream: false,
   temperature: '0.3', maxTokens: 4096, contextChars: 24000, historyTurns: 8,

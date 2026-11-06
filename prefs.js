@@ -1,4 +1,4 @@
-/* LitMag v2.0 defaults. All model credentials are supplied by the user in
+/* LitMag v2.0.1 defaults. All model credentials are supplied by the user in
  * Settings -> LitMag. Nothing here contacts a service or starts a process. */
 
 /* Model / endpoint */

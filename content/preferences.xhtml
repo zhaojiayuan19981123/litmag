@@ -1,20 +1,11 @@
-<?xml version="1.0"?>
-<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      xmlns:html="http://www.w3.org/1999/xhtml"
-      id="litmag-prefpane" class="litmag-prefpane"
+<vbox id="litmag-prefpane" class="litmag-prefpane"
       onload="if (window.LitMagPrefs) window.LitMagPrefs.bind()">
-
-  <!-- Loaded both here and through PreferencePanes.register({ scripts }).
-       The bind() guard makes the second load a no-op. -->
-  <script type="application/javascript" src="preferences.js" />
-  <html:style>
-    .litmag-prefpane { padding: 8px; }
-    .litmag-pref-row { align-items: center; padding: 3px 0; }
-    .litmag-pref-label { min-width: 92px; }
-    .litmag-pref-input { flex: 1; min-width: 220px; padding: 4px 7px; }
-    .litmag-pref-small { width: 92px; padding: 4px 7px; }
-    .litmag-pref-note { opacity: .72; font-size: 11px; margin-top: 6px; }
-  </html:style>
+  <!-- Zotero 10 inserts this file as a XUL fragment into the preferences
+       document. A leading declaration or extra namespace attributes make the
+       fragment parser fail with "not well-formed XML" and the whole pane
+       disappears. Namespaces come from the host document (html: prefix), and
+       scripts/stylesheets come from PreferencePanes.register. Keep this root
+       element bare: no declaration, no namespace, no inline script. -->
 
   <groupbox>
     <caption label="模型与接口（由你自己填写，插件不内置任何密钥）" />
@@ -101,7 +92,7 @@
       所有请求由 Zotero 直接发往你填写的接口；不需要启动任何外部程序或本地服务。密钥仅保存在本机 Zotero 配置中，请勿共享配置文件。
     </description>
     <description class="litmag-pref-note">
-      LitMag v2.0 · 仅支持 Zotero 10 · https://github.com/zhaojiayuan19981123/litmag
+      LitMag v2.0.1 · 仅支持 Zotero 10 · https://github.com/zhaojiayuan19981123/litmag
     </description>
   </groupbox>
 </vbox>

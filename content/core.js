@@ -32,7 +32,7 @@ var LitMag = (function () {
 
   var state = {
     id: PLUGIN_ID,
-    version: '2.0',
+    version: '2.0.1',
     rootURI: '',
     menus: [],
     sectionID: null,
@@ -181,22 +181,34 @@ var LitMag = (function () {
   }
 
   function openPreferences() {
+    var paneID = state.prefsPaneID || 'litmag-prefpane';
+    /* Zotero 10 does not provide Zotero.PreferencePanes.open(). The supported
+     * entry point is Zotero.Utilities.Internal.openPreferences(paneID), which
+     * selects our pane instead of landing on the last used built-in one. */
     try {
-      var panes = Zotero.PreferencePanes;
-      if (panes && typeof panes.open === 'function') {
-        panes.open(state.prefsPaneID || 'litmag-prefpane');
+      var util = Zotero.Utilities && Zotero.Utilities.Internal;
+      if (util && typeof util.openPreferences === 'function') {
+        util.openPreferences(paneID);
         return true;
       }
     }
     catch (e) { /* fall through */ }
     try {
-      var win = Zotero.getMainWindow && Zotero.getMainWindow();
-      if (win && win.ZoteroPane && typeof win.ZoteroPane.openPreferences === 'function') {
-        win.ZoteroPane.openPreferences();
+      var panes = Zotero.PreferencePanes;
+      if (panes && typeof panes.open === 'function') {
+        panes.open(paneID);
         return true;
       }
     }
     catch (e2) { /* fall through */ }
+    try {
+      var win = Zotero.getMainWindow && Zotero.getMainWindow();
+      if (win && win.ZoteroPane && typeof win.ZoteroPane.openPreferences === 'function') {
+        win.ZoteroPane.openPreferences(paneID);
+        return true;
+      }
+    }
+    catch (e3) { /* fall through */ }
     notify('请在 Zotero 设置中打开「LitMag」页面填写模型信息。');
     return false;
   }

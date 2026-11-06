@@ -1,4 +1,4 @@
-/* LitMag v2.0 - Zotero 10 bootstrapped plugin.
+/* LitMag v2.0.1 - Zotero 10 bootstrapped plugin.
  *
  * Everything lives inside the XPI: no sidecar process, no local server, no
  * npm dependencies. The modules below are loaded into this bootstrap scope in

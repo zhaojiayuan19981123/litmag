@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadPlugin, loadModulesOnly, fakeItem } from '../scripts/support.mjs';
 
-const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0', rootURI: 'file:///litmag/' };
+const DATA = { id: 'litmag@zhaojiayuan19981123.github.io', version: '2.0.1', rootURI: 'file:///litmag/' };
 
 const chatResponse = JSON.stringify({ choices: [{ message: { content: '回答内容' } }] });
 const httpRequest = async () => ({ status: 200, response: chatResponse });
@@ -108,6 +108,9 @@ test('floating panel is a singleton inside the main window and closes cleanly', 
   assert.equal(first, second);
   assert.equal(env.doc.body.children.length, 1);
   assert.match(first.root.attrs.class, /litmag-float/);
+  assert.match(first.root.style.cssText, /position:fixed/,
+    'float panel must stay visible even if the stylesheet fails to load');
+  assert.match(first.root.style.cssText, /z-index:9999/);
   P.ui.closeFloat();
   assert.equal(env.doc.body.children.length, 0);
   assert.equal(P.ui.currentFloat(), null);

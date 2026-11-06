@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "LitMag",
-  "version": "2.0",
+  "version": "2.0.1",
   "description": "A self-contained Zotero 10 AI copilot. Configure your own model endpoint and API key in Settings; all requests go directly from Zotero, no companion app required.",
   "author": "SciTerminal",
   "homepage_url": "https://github.com/zhaojiayuan19981123/litmag",

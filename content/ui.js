@@ -273,6 +273,20 @@
       mode: options.mode || 'full',
       float: true,
     });
+    /* Inline layout fallbacks keep the panel visible even when the stylesheet
+     * could not be loaded. The CSS still controls colours and details; these
+     * properties only guarantee a usable, positioned box inside the XUL
+     * window, where an unstyled HTML div would otherwise collapse. */
+    panel.root.style.cssText = [
+      'position:fixed', 'right:24px', 'top:72px', 'z-index:9999',
+      'width:460px', 'height:min(680px, calc(100vh - 100px))',
+      'min-height:340px', 'display:flex', 'flex-direction:column',
+      'box-sizing:border-box', 'overflow:hidden', 'padding:10px', 'gap:8px',
+      'background:var(--lm-bg, #ffffff)', 'color:var(--lm-fg, #1f2328)',
+      'font:13px/1.55 "Segoe UI", "Noto Sans SC", sans-serif',
+      'border:1px solid var(--lm-border, #e3e6ea)', 'border-radius:10px',
+      'box-shadow:0 12px 40px rgba(0,0,0,.28)',
+    ].join(';');
     var parent = doc.body || doc.documentElement;
     parent.appendChild(panel.root);
     floatPanel = panel;
