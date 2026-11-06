@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.litmag/
+*.log
+.DS_Store

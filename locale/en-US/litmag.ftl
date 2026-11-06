@@ -1,0 +1,24 @@
+litmag-menu-open =
+    .label = Open LitMag Workbench
+litmag-menu-analyze =
+    .label = Analyze Selected Items in LitMag
+litmag-menu-status =
+    .label = Check LitMag Engine Status
+litmag-section-header =
+    .label = LitMag
+    .tooltiptext = LitMag workbench bridge
+litmag-section-open =
+    .label = Open in LitMag
+litmag-section-analyze =
+    .label = Analyze This Item
+litmag-section-empty = Select an item to see LitMag information
+litmag-section-engine-online = Engine connected
+litmag-section-engine-offline = Engine not running (limited features)
+litmag-reader-ask =
+    .label = Ask LitMag
+litmag-pref-title = LitMag
+litmag-pref-engine-url = Engine URL
+litmag-pref-workbench-url = Workbench URL
+litmag-pref-token = Engine token (blank = auto-detect)
+litmag-pref-embedded = Open in an embedded Zotero window
+litmag-pref-note = Click "Check connection" after editing. Both URLs point to localhost.

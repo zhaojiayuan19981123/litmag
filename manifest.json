@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "LitMag",
+  "version": "1.0",
+  "description": "Zotero 10 bridge plugin: send selected items to the LitMag workbench while reusing Zotero's native Reading Mode, search, items and annotations.",
+  "author": "SciTerminal",
+  "homepage_url": "https://github.com/zhaojiayuan19981123/litmag",
+  "icons": {
+    "48": "content/icon.svg",
+    "96": "content/icon.svg"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "litmag@zhaojiayuan19981123.github.io"
+    }
+  },
+  "applications": {
+    "zotero": {
+      "id": "litmag@zhaojiayuan19981123.github.io",
+      "update_url": "https://raw.githubusercontent.com/zhaojiayuan19981123/litmag/main/update.json",
+      "strict_min_version": "10.0.6",
+      "strict_max_version": "10.*"
+    }
+  }
+}

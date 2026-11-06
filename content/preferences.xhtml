@@ -1,0 +1,36 @@
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      id="litmag-prefpane" class="litmag-pref-group">
+
+  <groupbox>
+    <caption label="LitMag / 本机连接" />
+    <hbox align="center" class="litmag-pref-row">
+      <label value="引擎地址" data-l10n-id="litmag-pref-engine-url" />
+      <html:input id="litmag-engine-url" type="text" />
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <label value="工作台地址" data-l10n-id="litmag-pref-workbench-url" />
+      <html:input id="litmag-workbench-url" type="text" />
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <label value="引擎令牌" data-l10n-id="litmag-pref-token" />
+      <html:input id="litmag-token" type="text" placeholder="留空则自动读取 ~/.litmag/engine.json" />
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <html:input id="litmag-embedded" type="checkbox" />
+      <label value="在 Zotero 内嵌窗口中打开" data-l10n-id="litmag-pref-embedded" />
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <button id="litmag-save" label="保存设置" />
+      <button id="litmag-check" label="检查连接" />
+      <label id="litmag-pref-status" value="" flex="1" />
+    </hbox>
+  </groupbox>
+
+  <description class="litmag-pref-note" data-l10n-id="litmag-pref-note">
+    修改后点击「检查连接」验证。引擎与工作台地址均为本机地址。
+  </description>
+  <description class="litmag-pref-note">
+    LitMag v1.0 · 仅支持 Zotero 10 · https://github.com/zhaojiayuan19981123/litmag
+  </description>
+</vbox>

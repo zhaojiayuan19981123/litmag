@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="litmag-workbench"
+        title="LitMag 工作台"
+        width="1280" height="840"
+        persist="width height screenX screenY sizemode">
+
+  <script type="application/javascript" src="workbench.js" />
+
+  <vbox flex="1">
+    <hbox id="litmag-toolbar" align="center" style="padding:6px 8px; gap:8px;">
+      <label value="LitMag" style="font-weight:bold;" />
+      <button id="litmag-reload" label="刷新" />
+      <button id="litmag-external" label="在系统浏览器中打开" />
+      <label id="litmag-status" value="" flex="1" style="opacity:.75;" />
+    </hbox>
+    <browser id="litmag-browser" type="content" flex="1" src="about:blank" disablehistory="true" />
+  </vbox>
+</window>

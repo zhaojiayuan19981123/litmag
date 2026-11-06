@@ -1,0 +1,60 @@
+/* LitMag preference pane and item pane section styling.
+ * Colors are inherited from Zotero so light/dark themes both work. */
+
+.litmag-pref-group {
+  padding: 8px 4px;
+}
+
+.litmag-pref-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.litmag-pref-row label {
+  min-width: 150px;
+}
+
+.litmag-pref-row input[type="text"] {
+  flex: 1;
+  min-width: 220px;
+}
+
+.litmag-pref-note {
+  opacity: 0.75;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.litmag-section {
+  padding: 6px 2px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.litmag-section-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.litmag-section-meta {
+  opacity: 0.75;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.litmag-section-status-ok {
+  color: #0f6e56;
+}
+
+.litmag-section-status-off {
+  opacity: 0.75;
+}
+
+.litmag-section-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}

@@ -1,0 +1,18 @@
+{
+  "addons": {
+    "litmag@zhaojiayuan19981123.github.io": {
+      "updates": [
+        {
+          "version": "1.0",
+          "update_link": "https://github.com/zhaojiayuan19981123/litmag/releases/download/v1.0/litmag-1.0.xpi",
+          "update_hash": "sha256:7f6bde3f4ef5f9e9dee8840055d7da441de6220b211df951290338e294d701b4",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "10.0.6"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
