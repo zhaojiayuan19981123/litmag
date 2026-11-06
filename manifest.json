@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "LitMag",
-  "version": "1.0",
-  "description": "Zotero 10 bridge plugin: send selected items to the LitMag workbench while reusing Zotero's native Reading Mode, search, items and annotations.",
+  "version": "2.0",
+  "description": "A self-contained Zotero 10 AI copilot. Configure your own model endpoint and API key in Settings; all requests go directly from Zotero, no companion app required.",
   "author": "SciTerminal",
   "homepage_url": "https://github.com/zhaojiayuan19981123/litmag",
   "icons": {

@@ -20,7 +20,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Build XPI and engine package
+      - name: Build self-contained XPI
         run: node scripts/build-xpi.mjs
-      - name: Run tests
+      - name: Run unit and HTTP end-to-end tests
         run: node --test
+      - name: Verify build metadata
+        run: node -e "console.log(require('./dist/build-info.json').version)"

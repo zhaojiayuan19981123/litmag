@@ -1,4 +1,4 @@
-/* Build the XPI, the engine package, update.json and checksums.
+/* Build the self-contained XPI, update.json and checksums.
  * No build tooling and no dependencies: `node scripts/build-xpi.mjs`.
  */
 
@@ -16,13 +16,7 @@ const pluginID = JSON.parse(fss.readFileSync(path.join(root, 'manifest.json'), '
 const REPO = 'https://github.com/zhaojiayuan19981123/litmag';
 const XPI_FILES = ['manifest.json', 'bootstrap.js', 'prefs.js'];
 const XPI_DIRS = ['content', 'locale', 'skin'];
-const ENGINE_FILES = [
-  'engine/README.txt',
-  'engine/server.mjs',
-  'engine/config.example.json',
-  'engine/start.cmd',
-  'engine/start.sh',
-];
+const FORBIDDEN = [/23127/, /127\.0\.0\.1:3000/, /litmag-engine/, /\/workbench\?/];
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -45,43 +39,39 @@ async function walk(dir, prefix = '') {
 
 async function collect() {
   const files = [...XPI_FILES];
-  for (const d of XPI_DIRS) {
-    files.push(...(await walk(path.join(root, d), d)));
-  }
+  for (const d of XPI_DIRS) files.push(...(await walk(path.join(root, d), d)));
   return files.filter((f) => fss.existsSync(path.join(root, f)))
     .sort((a, b) => a.localeCompare(b));
-}
-
-async function makeZip(files, outFile) {
-  const entries = [];
-  for (const rel of files) {
-    entries.push({
-      name: rel,
-      data: await fs.readFile(path.join(root, rel)),
-      unixMode: rel.endsWith('.sh') ? 0o755 : 0o644,
-    });
-  }
-  const buf = createZip(entries);
-  await fs.writeFile(outFile, buf);
-  return buf;
 }
 
 async function main() {
   await fs.mkdir(dist, { recursive: true });
 
   const xpiFiles = await collect();
-  for (const required of ['manifest.json', 'bootstrap.js', 'content/litmag.js', 'locale/zh-CN/litmag.ftl']) {
+  for (const required of [
+    'manifest.json', 'bootstrap.js', 'prefs.js',
+    'content/core.js', 'content/http.js', 'content/ai.js', 'content/context.js',
+    'content/prompts.js', 'content/session.js', 'content/ui.js', 'content/menus.js',
+    'content/preferences.xhtml', 'content/preferences.js',
+    'locale/zh-CN/litmag.ftl', 'locale/en-US/litmag.ftl', 'skin/litmag.css',
+  ]) {
     if (!xpiFiles.includes(required)) throw new Error(`missing required XPI file: ${required}`);
+  }
+
+  const entries = [];
+  for (const rel of xpiFiles) {
+    const data = await fs.readFile(path.join(root, rel));
+    const text = data.toString('utf8');
+    for (const pattern of FORBIDDEN) {
+      if (pattern.test(text)) throw new Error(`${rel} still depends on a sidecar (${pattern})`);
+    }
+    entries.push({ name: rel, data, unixMode: rel.endsWith('.sh') ? 0o755 : 0o644 });
   }
   const xpiName = `litmag-${version}.xpi`;
   const xpiPath = path.join(dist, xpiName);
-  const xpiBuf = await makeZip(xpiFiles, xpiPath);
+  const xpiBuf = createZip(entries);
+  await fs.writeFile(xpiPath, xpiBuf);
   const xpiHash = sha256(xpiBuf);
-
-  const engineName = `litmag-engine-${version}.zip`;
-  const enginePath = path.join(dist, engineName);
-  const engineBuf = await makeZip(ENGINE_FILES, enginePath);
-  const engineHash = sha256(engineBuf);
 
   const update = {
     addons: {
@@ -90,31 +80,27 @@ async function main() {
           version,
           update_link: `${REPO}/releases/download/v${version}/${xpiName}`,
           update_hash: `sha256:${xpiHash}`,
-          applications: {
-            zotero: { strict_min_version: '10.0.6' },
-          },
+          applications: { zotero: { strict_min_version: '10.0.6' } },
         }],
       },
     },
   };
   await fs.writeFile(path.join(root, 'update.json'), JSON.stringify(update, null, 2) + '\n', 'utf8');
-
-  const sums = `${xpiHash}  ${xpiName}\n${engineHash}  ${engineName}\n`;
-  await fs.writeFile(path.join(dist, 'SHA256SUMS.txt'), sums, 'utf8');
+  await fs.writeFile(path.join(dist, 'SHA256SUMS.txt'), `${xpiHash}  ${xpiName}\n`, 'utf8');
 
   const info = {
     version,
     tag: `v${version}`,
     pluginID,
+    selfContained: true,
     xpi: { name: xpiName, path: xpiPath, bytes: xpiBuf.length, sha256: xpiHash },
-    engine: { name: engineName, path: enginePath, bytes: engineBuf.length, sha256: engineHash },
     files: xpiFiles,
   };
   await fs.writeFile(path.join(dist, 'build-info.json'), JSON.stringify(info, null, 2) + '\n', 'utf8');
 
   console.log(`XPI     ${xpiName}  ${xpiBuf.length} bytes  ${xpiFiles.length} files`);
-  console.log(`Engine  ${engineName}  ${engineBuf.length} bytes`);
   console.log(`sha256  ${xpiHash}`);
+  console.log('engine  none (all AI calls run inside Zotero)');
 }
 
 main().catch((e) => {

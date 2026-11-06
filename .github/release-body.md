@@ -1,53 +1,34 @@
-# LitMag v1.0：Zotero 10 插件（首个版本）
+# LitMag v2.0 · 纯 Zotero 插件版
 
-## 本版本主要更新（v1.0）
+**这一版把 v1.0 的「插件 + 本机桥接服务」架构彻底删掉了。** 现在只有一个 `.xpi`：安装到 Zotero 10 后即可使用，不需要打开任何外部程序，不需要 Node.js、不需要本地服务、不需要原工作台。大模型由用户自己在「设置 → LitMag」中填写，插件通过 Zotero 自带的特权网络能力直接向该接口发起请求。
 
-### 为什么做这个版本
+参考了 [zotero-prism](https://github.com/mxlapan/zotero-prism) 的做法：`Zotero.Prefs` 保存用户配置、`Zotero.HTTP` 直连模型（含 SSE 流式）、`Zotero.PDFWorker` / 全文索引读取附件、`Zotero.Item('note')` 写回子笔记。
 
-原来的「一站式科研终端」是一个独立 Electron 应用，文献库和 Zotero 各存一份；而 Zotero 10 已经原生提供了 PDF Reading Mode（表格、公式、图片按原版渲染）、FTS5 全文检索、条目 / 附件 / 批注体系。继续把阅读模式、版面分析和文献检索重写一遍没有意义。
+## 主要变化
 
-**做法**：把工作台改成「Zotero 10 插件 + 一个本机轻量引擎」两件套，Zotero 库成为唯一数据真源，阅读模式和检索直接复用原生能力，插件只负责把选中条目送进 AI 工作台。
+- 删除 `engine/` 桥接服务、启动脚本、握手探活、令牌文件与工作台内嵌窗口；XPI 内不再有任何本地端口监听或外部进程依赖。
+- 新增模型设置页：服务商（OpenAI 兼容 / Anthropic / 自定义完整端点）、Base URL、完整端点开关、API Key、模型名称、温度、最大 tokens、流式输出、系统提示词、上下文预算、附带全文/标注/笔记、保留轮数、配置档、**测试连接**与**获取模型列表**。
+- 新增 AI 内核：OpenAI 兼容 `/chat/completions` 与 Anthropic `/v1/messages` 双协议、SSE 流式输出、链式思考字段过滤、空回答与网页误填检测、按状态码/响应体分类的可操作中文报错（密钥、余额、限流、模型、上下文、地址）。
+- 新增 Zotero 原生上下文：条目元数据、摘要、PDF 全文、标注批注、已有子笔记；按预算截断，仅在会话首轮注入。
+- 新增条目面板「LitMag AI」分区、主窗口内浮层助手、工具/右键菜单、阅读器划词三动作、9 个科研快捷指令；回答可保存为条目的子笔记或复制。
+- 全部数据以 Zotero 库为真源；Zotero 10 原生 Reading Mode、FTS5 检索、批注与同步保持不变。
 
-### 这一版能用做什么
+## 安装与配置
 
-- 工具菜单：打开 LitMag 工作台、检查引擎状态。
-- 右键条目：把选中条目的标题、作者、年份、DOI、期刊、摘要、附件路径送到工作台。
-- 条目面板新增 LitMag 分区：显示条目信息与引擎在线状态，提供「打开 / 分析」按钮。
-- PDF 阅读器划词浮层：把选中文本作为问题带给工作台。
-- 设置 → LitMag：配置引擎地址、工作台地址、令牌，一键检查连接。
-- 工作台通过 Zotero 内嵌窗口打开；若某个 Zotero 构建阻止内嵌加载，会自动降级为系统浏览器。
+1. 下载 `litmag-2.0.xpi` → Zotero 10 → 工具 → 插件 → ⚙ → Install Add-on From File → 重启。
+2. 设置 → LitMag：填 Base URL、API Key、模型名称 → 「测试连接」。
+3. 选中一条文献，在右侧「LitMag AI」分区提问；或用工具菜单打开浮窗、右键生成多篇综述、阅读器里划词提问。
 
-### 用户需要做什么
+支持 OpenAI、DeepSeek、硅基流动、Moonshot、智谱、通义千问、Gemini 的 OpenAI 兼容端点、Anthropic、Ollama / LM Studio / vLLM / 任意中转。
 
-1. 下载本页的 `litmag-1.0.xpi` 和 `litmag-engine-1.0.zip`。
-2. Zotero 10 → 工具 → 插件 → 齿轮 → Install Add-on From File → 选 `.xpi` → 重启 Zotero。
-3. 解压 `litmag-engine-1.0.zip`，运行 `start.cmd`（Windows）或 `sh start.sh`（macOS / Linux）。需要 Node.js 20+，**不需要 `npm install`**。
-4.（可选）启动原工作台命令行版（`npm start`，默认 3000 端口）后即可在插件窗口里使用完整工作台。只装插件、不开工作台，条目面板和菜单也能正常用。
+## 验证
 
-引擎会自动写 `~/.litmag/engine.json`（端口 + 令牌），插件自动读取，一般无需手动配置。
+- `node --test`：覆盖 manifest、启动/关闭与菜单回退、条目面板、阅读器、模型协议与 SSE、错误分类、上下文与笔记写回、偏好面板，并在本地真实 HTTP 服务上完成 SSE 流式端到端测试。
+- 构建脚本为零依赖纯 Node，产出 `litmag-2.0.xpi`、`update.json`、`SHA256SUMS.txt`；`update.json` 的 `update_hash` 与 XPI 字节一致。
+- CI 在 Node 20 / 22 × Ubuntu / Windows 四个组合上构建并测试。
 
-## 安装包说明
+## 说明
 
-| 文件 | 用途 |
-|---|---|
-| `litmag-1.0.xpi` | Zotero 10 插件本体（40 KB，纯 JS） |
-| `litmag-engine-1.0.zip` | 零依赖本机桥接引擎（16 KB，Node 20+） |
-| `SHA256SUMS.txt` | 两个包的校验值 |
-| `update.json` | 插件自动更新清单（含 XPI 的 sha256） |
-
-插件只支持 **Zotero 10.0.6 及以上**，`strict_max_version` 为 `10.*`；Zotero 7 / 8 / 9 暂不支持。
-
-## 测试证据
-
-- `node --test`：Node 20.10.0 与 Node 22.22.2 各 **25/25 通过**（manifest / ZIP 结构 / 插件启动与关闭生命周期 / 菜单与面板注册 / 引擎 HTTP 接口 / 代理与 SSE）。
-- 真实进程端到端烟测 **9/9 通过**：CLI 启动、握手、令牌校验、上下文写入与读取、状态页、工作台宕机时的中文提示、进程退出。
-- XPI 与引擎包用 Python `zipfile.testzip()` 校验均为 `None`；XPI 内 14 个文件、引擎包内 5 个文件，文件路径全部使用 `/` 并带 UTF-8 标志。
-- 构建脚本自动把 XPI 的 sha256 写进 `update.json` 的 `update_hash`，并有单测反查一致性。
-
-## 说明与已知限制
-
-- **开发机未安装 Zotero 10，因此本版未做真机安装验证**。首次实装建议用独立测试配置（`-p`）启动 Zotero，不要直接拿日常文献库试；若菜单或内嵌窗口异常，插件已内置 DOM 菜单回退与外部浏览器降级。
-- v1.0 的上下文是「传递」而非「同步」：工作台页面已能拿到 `window.__LITMAG_CONTEXT__`，但还没有 UI 消费它；AI 结构化字段写回 `extra` / 子笔记、跨文献对话属于后续版本。
-- 工作台独有的项目 / 任务 / 日历 / 灵感 / 成果 / 学位论文 / 顶刊 / 邮箱模块仍在原应用中，不进入 XPI。
-- 原工作台代码 **一行未改**：引擎只是一个本机反向代理 + 小型 JSON API，不复制 65 MB 版面模型，也不读取原应用的 API Key。
-- 自动更新：`manifest.json` 的 `update_url` 指向 `main` 分支根目录的 `update.json`；以后发新版只需替换 XPI 并更新 hash 与版本号。
+- 仅适配 Zotero 10（`10.0.6` ~ `10.*`）。本机未安装 Zotero 10，XPI 未做真机安装验证；首次试装建议使用独立测试配置 `-p`。
+- 密钥保存在本机 Zotero 偏好中，插件不内置任何密钥，也不把配置上传到别处。
+- 扫描版 PDF 需先由 Zotero 建立全文索引，否则只能读到元数据与摘要。

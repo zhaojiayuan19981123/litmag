@@ -1,36 +1,107 @@
+<?xml version="1.0"?>
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       xmlns:html="http://www.w3.org/1999/xhtml"
-      id="litmag-prefpane" class="litmag-pref-group">
+      id="litmag-prefpane" class="litmag-prefpane"
+      onload="if (window.LitMagPrefs) window.LitMagPrefs.bind()">
+
+  <!-- Loaded both here and through PreferencePanes.register({ scripts }).
+       The bind() guard makes the second load a no-op. -->
+  <script type="application/javascript" src="preferences.js" />
+  <html:style>
+    .litmag-prefpane { padding: 8px; }
+    .litmag-pref-row { align-items: center; padding: 3px 0; }
+    .litmag-pref-label { min-width: 92px; }
+    .litmag-pref-input { flex: 1; min-width: 220px; padding: 4px 7px; }
+    .litmag-pref-small { width: 92px; padding: 4px 7px; }
+    .litmag-pref-note { opacity: .72; font-size: 11px; margin-top: 6px; }
+  </html:style>
 
   <groupbox>
-    <caption label="LitMag / 本机连接" />
+    <caption label="模型与接口（由你自己填写，插件不内置任何密钥）" />
     <hbox align="center" class="litmag-pref-row">
-      <label value="引擎地址" data-l10n-id="litmag-pref-engine-url" />
-      <html:input id="litmag-engine-url" type="text" />
+      <label value="服务商" class="litmag-pref-label" />
+      <menulist id="litmag-provider" native="true">
+        <menupopup>
+          <menuitem value="openai" label="OpenAI 兼容（OpenAI / DeepSeek / 硅基流动 / 智谱 / Moonshot / Qwen / Ollama / LM Studio / 中转）" />
+          <menuitem value="anthropic" label="Anthropic（/v1/messages）" />
+          <menuitem value="custom" label="自定义完整端点（OpenAI 格式）" />
+        </menupopup>
+      </menulist>
     </hbox>
     <hbox align="center" class="litmag-pref-row">
-      <label value="工作台地址" data-l10n-id="litmag-pref-workbench-url" />
-      <html:input id="litmag-workbench-url" type="text" />
+      <label value="Base URL" class="litmag-pref-label" />
+      <html:input id="litmag-base-url" type="text" class="litmag-pref-input"
+                  placeholder="https://api.openai.com/v1" />
     </hbox>
     <hbox align="center" class="litmag-pref-row">
-      <label value="引擎令牌" data-l10n-id="litmag-pref-token" />
-      <html:input id="litmag-token" type="text" placeholder="留空则自动读取 ~/.litmag/engine.json" />
+      <html:input id="litmag-full-url" type="checkbox" />
+      <label value="上面填写的是完整端点（不再自动拼接 /v1/chat/completions）" />
     </hbox>
     <hbox align="center" class="litmag-pref-row">
-      <html:input id="litmag-embedded" type="checkbox" />
-      <label value="在 Zotero 内嵌窗口中打开" data-l10n-id="litmag-pref-embedded" />
+      <label value="API Key" class="litmag-pref-label" />
+      <html:input id="litmag-api-key" type="password" class="litmag-pref-input"
+                  placeholder="sk-…（本地模型可留空）" />
     </hbox>
     <hbox align="center" class="litmag-pref-row">
-      <button id="litmag-save" label="保存设置" />
-      <button id="litmag-check" label="检查连接" />
-      <label id="litmag-pref-status" value="" flex="1" />
+      <label value="模型名称" class="litmag-pref-label" />
+      <html:input id="litmag-model" type="text" class="litmag-pref-input"
+                  placeholder="gpt-4o-mini / deepseek-chat / Qwen/Qwen3-8B …" />
+      <html:button id="litmag-fetch-models" class="litmag-btn litmag-btn-mini">获取模型列表</html:button>
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <label value="温度" class="litmag-pref-label" />
+      <html:input id="litmag-temperature" type="text" class="litmag-pref-small" />
+      <label value="最大 tokens" />
+      <html:input id="litmag-max-tokens" type="text" class="litmag-pref-small" />
+      <html:input id="litmag-stream" type="checkbox" />
+      <label value="流式输出" />
+    </hbox>
+    <hbox align="baseline" class="litmag-pref-row">
+      <label value="系统提示词" class="litmag-pref-label" />
+      <html:textarea id="litmag-system-prompt" rows="4" class="litmag-pref-input"></html:textarea>
     </hbox>
   </groupbox>
 
-  <description class="litmag-pref-note" data-l10n-id="litmag-pref-note">
-    修改后点击「检查连接」验证。引擎与工作台地址均为本机地址。
-  </description>
-  <description class="litmag-pref-note">
-    LitMag v1.0 · 仅支持 Zotero 10 · https://github.com/zhaojiayuan19981123/litmag
-  </description>
+  <groupbox>
+    <caption label="发送给模型的文献上下文" />
+    <hbox align="center" class="litmag-pref-row">
+      <label value="上下文预算（字符）" class="litmag-pref-label" />
+      <html:input id="litmag-context-chars" type="text" class="litmag-pref-small" />
+      <label value="保留对话轮数" />
+      <html:input id="litmag-history-turns" type="text" class="litmag-pref-small" />
+    </hbox>
+    <hbox align="center" class="litmag-pref-row">
+      <html:input id="litmag-include-fulltext" type="checkbox" />
+      <label value="附带 PDF 全文" />
+      <html:input id="litmag-include-annotations" type="checkbox" />
+      <label value="附带标注与批注" />
+      <html:input id="litmag-include-notes" type="checkbox" />
+      <label value="附带已有子笔记" />
+    </hbox>
+  </groupbox>
+
+  <groupbox>
+    <caption label="配置档（可保存多套模型设置并快速切换）" />
+    <hbox align="center" class="litmag-pref-row">
+      <menulist id="litmag-profiles" native="true"><menupopup /></menulist>
+      <html:button id="litmag-profile-apply" class="litmag-btn litmag-btn-mini">应用</html:button>
+      <html:button id="litmag-profile-save" class="litmag-btn litmag-btn-mini">保存当前为…</html:button>
+      <html:button id="litmag-profile-delete" class="litmag-btn litmag-btn-mini">删除</html:button>
+    </hbox>
+  </groupbox>
+
+  <groupbox>
+    <caption label="保存与验证" />
+    <hbox align="center" class="litmag-pref-row">
+      <html:button id="litmag-save" class="litmag-btn litmag-btn-primary">保存设置</html:button>
+      <html:button id="litmag-test" class="litmag-btn">测试连接</html:button>
+      <label id="litmag-status" value="" flex="1" />
+    </hbox>
+    <description class="litmag-pref-note">
+      所有请求由 Zotero 直接发往你填写的接口；不需要启动任何外部程序或本地服务。密钥仅保存在本机 Zotero 配置中，请勿共享配置文件。
+    </description>
+    <description class="litmag-pref-note">
+      LitMag v2.0 · 仅支持 Zotero 10 · https://github.com/zhaojiayuan19981123/litmag
+    </description>
+  </groupbox>
 </vbox>

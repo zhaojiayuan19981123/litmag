@@ -1,60 +1,157 @@
-/* LitMag preference pane and item pane section styling.
- * Colors are inherited from Zotero so light/dark themes both work. */
+/* LitMag v2.0 - styles for the item-pane section, the in-window floating
+ * panel, the reader selection popup and the preference pane. */
 
-.litmag-pref-group {
-  padding: 8px 4px;
+.litmag-panel {
+  --lm-bg: #ffffff;
+  --lm-fg: #1f2328;
+  --lm-muted: #6b7280;
+  --lm-border: #e3e6ea;
+  --lm-soft: #f5f7fa;
+  --lm-accent: #2f6fdb;
+  --lm-user: #eaf2ff;
+  --lm-danger: #c0392b;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 340px;
+  padding: 10px;
+  gap: 8px;
+  font: 13px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+  color: var(--lm-fg);
+  background: var(--lm-bg);
 }
 
-.litmag-pref-row {
+@media (prefers-color-scheme: dark) {
+  .litmag-panel {
+    --lm-bg: #1e2024;
+    --lm-fg: #e6e8eb;
+    --lm-muted: #9aa1ab;
+    --lm-border: #3a3f47;
+    --lm-soft: #272b31;
+    --lm-accent: #6ea8fe;
+    --lm-user: #27364b;
+    --lm-danger: #ff8f80;
+  }
+}
+
+.litmag-float {
+  position: fixed;
+  right: 24px;
+  top: 72px;
+  z-index: 9999;
+  width: 460px;
+  height: min(680px, calc(100vh - 100px));
+  border: 1px solid var(--lm-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
+  overflow: hidden;
+}
+
+.litmag-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 6px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--lm-border);
+}
+.litmag-brand { font-weight: 700; font-size: 14px; letter-spacing: .2px; }
+.litmag-status { flex: 1; font-size: 11px; color: var(--lm-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.litmag-head-actions { display: flex; gap: 4px; }
+
+.litmag-mode { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+.litmag-mode-label { color: var(--lm-muted); }
+.litmag-mode-info { color: var(--lm-muted); }
+.litmag-select {
+  max-width: 190px;
+  padding: 3px 6px;
+  border: 1px solid var(--lm-border);
+  border-radius: 5px;
+  background: var(--lm-bg);
+  color: var(--lm-fg);
+  font: inherit;
 }
 
-.litmag-pref-row label {
-  min-width: 150px;
+.litmag-quick { display: flex; flex-wrap: wrap; gap: 4px; }
+.litmag-chip {
+  padding: 3px 8px;
+  border: 1px solid var(--lm-border);
+  border-radius: 999px;
+  background: var(--lm-soft);
+  color: var(--lm-fg);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
 }
+.litmag-chip:hover { border-color: var(--lm-accent); color: var(--lm-accent); }
 
-.litmag-pref-row input[type="text"] {
+.litmag-transcript {
   flex: 1;
-  min-width: 220px;
-}
-
-.litmag-pref-note {
-  opacity: 0.75;
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-.litmag-section {
-  padding: 6px 2px;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.litmag-section-title {
-  font-weight: 500;
-  margin-bottom: 4px;
-  word-break: break-word;
-}
-
-.litmag-section-meta {
-  opacity: 0.75;
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.litmag-section-status-ok {
-  color: #0f6e56;
-}
-
-.litmag-section-status-off {
-  opacity: 0.75;
-}
-
-.litmag-section-actions {
+  min-height: 180px;
+  max-height: 58vh;
+  overflow: auto;
+  padding: 4px 2px;
   display: flex;
-  gap: 6px;
-  margin-top: 8px;
+  flex-direction: column;
+  gap: 8px;
 }
+.litmag-float .litmag-transcript { max-height: none; }
+.litmag-empty { color: var(--lm-muted); font-size: 12px; padding: 16px; text-align: center; }
+
+.litmag-turn { padding: 8px 10px; border-radius: 8px; background: var(--lm-soft); border: 1px solid var(--lm-border); }
+.litmag-turn-user { background: var(--lm-user); }
+.litmag-turn-error { border-color: var(--lm-danger); }
+.litmag-turn-meta { font-size: 10px; color: var(--lm-muted); margin-bottom: 4px; }
+.litmag-turn-body { font-size: 13px; word-break: break-word; }
+.litmag-turn-body code { padding: 1px 3px; background: rgba(127, 127, 127, .16); border-radius: 3px; }
+.litmag-turn-body pre { margin: 6px 0; padding: 8px; background: rgba(127, 127, 127, .12); border-radius: 5px; overflow: auto; }
+.litmag-turn-body pre code { background: transparent; padding: 0; }
+
+.litmag-input-row { display: flex; flex-direction: column; gap: 5px; }
+.litmag-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 7px 9px;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  background: var(--lm-bg);
+  color: var(--lm-fg);
+  font: inherit;
+}
+.litmag-input:focus { outline: 2px solid var(--lm-accent); outline-offset: -1px; }
+
+.litmag-btn {
+  padding: 5px 10px;
+  border: 1px solid var(--lm-border);
+  border-radius: 6px;
+  background: var(--lm-soft);
+  color: var(--lm-fg);
+  font: inherit;
+  cursor: pointer;
+}
+.litmag-btn:hover:not([disabled]) { border-color: var(--lm-accent); }
+.litmag-btn[disabled] { opacity: .45; cursor: default; }
+.litmag-btn-primary { background: var(--lm-accent); border-color: var(--lm-accent); color: #fff; }
+.litmag-btn-mini { padding: 2px 7px; font-size: 11px; }
+
+.litmag-footer { display: flex; gap: 6px; flex-wrap: wrap; }
+.litmag-hint { min-height: 14px; font-size: 11px; color: var(--lm-muted); }
+.litmag-reader-btn {
+  display: block;
+  width: 100%;
+  padding: 5px 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Preference pane */
+.litmag-prefpane { padding: 8px; font: 13px/1.5 sans-serif; }
+.litmag-pref-row { padding: 3px 0; gap: 6px; align-items: center; }
+.litmag-pref-label { min-width: 92px; }
+.litmag-pref-input { flex: 1; min-width: 220px; padding: 4px 7px; box-sizing: border-box; }
+.litmag-pref-small { width: 92px; padding: 4px 7px; }
+.litmag-pref-note { opacity: .72; font-size: 11px; margin-top: 6px; }

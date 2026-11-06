@@ -1,16 +1,18 @@
 {
   "name": "litmag",
-  "version": "1.0",
+  "version": "2.0",
   "private": true,
   "type": "module",
-  "description": "Zotero 10 plugin plus a zero-dependency local bridge engine for the LitMag workbench",
+  "description": "A self-contained Zotero 10 plugin: AI copilot with user-supplied model credentials, running entirely inside Zotero.",
+  "config": {
+    "addonID": "litmag@zhaojiayuan19981123.github.io",
+    "addonRef": "litmag",
+    "prefsPrefix": "extensions.litmag"
+  },
   "scripts": {
     "build": "node scripts/build-xpi.mjs",
-    "test": "node --test",
-    "engine": "node engine/server.mjs"
+    "test": "node --test"
   },
-  "engines": {
-    "node": ">=20"
-  },
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/zhaojiayuan19981123/litmag"
 }
